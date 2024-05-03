@@ -1,10 +1,13 @@
 const db = require("../models");
-const ROLES = db.ROLES;
-const User = db.user;
+// const ROLES = db.ROLES;
+const Investor = db.investor;
+// const Company = db.company;
+const Admin = db.admin;
 
 checkDuplicateUsernameOrEmail = (req, res, next) => {
+
   // Username
-  User.findOne({
+  Admin.findOne({
     userName: req.body.userName
   }).exec((err, user) => {
     if (err) {
@@ -13,43 +16,105 @@ checkDuplicateUsernameOrEmail = (req, res, next) => {
     }
 
     if (user) {
-      console.log('user: ', user);
+      console.log('useradmin: ', user);
       res.status(400).send({ message: "Username is already in use!" });
       return;
     }
 
+    if(req.body.role === "investor") {
+      Investor.findOne({
+        userName: req.body.userName
+      }).exec((err, user) => {
+        if (err) {
+          res.status(500).send({ message: err });
+          return;
+        }
+    
+        if (user) {
+          console.log('user: ', user);
+          res.status(400).send({ message: "Username is already in use!" });
+          return;
+        }
+      })
+    } else {
+        // Company.findOne({
+        //   userName: req.body.userName
+        // }).exec((err, user) => {
+        //   if (err) {
+        //     res.status(500).send({ message: err });
+        //     return;
+        //   }
+
+        //   if (user) {
+        //     console.log('user: ', user);
+        //     res.status(400).send({ message: "Username is already in use!" });
+        //     return;
+        //   }
+        // })
+    }
+
     // Email
-    User.findOne({
+    Admin.findOne({
       email: req.body.email
     }).exec((err, user) => {
       if (err) {
         res.status(500).send({ message: err });
         return;
       }
-
+  
       if (user) {
         res.status(400).send({ message: "Email is already in use!" });
         return;
       }
 
-      next();
-    });
-  });
-};
+      if(req.body.role === "investor") {
+        Investor.findOne({
+          email: req.body.email
+        }).exec((err, user) => {
+          if (err) {
+            res.status(500).send({ message: err });
+            return;
+          }
+      
+          if (user) {
+            res.status(400).send({ message: "Email is already in use!" });
+            return;
+          }
+        })
+      } else {
+          // Company.findOne({
+          //   email: req.body.email
+          // }).exec((err, user) => {
+          //   if (err) {
+          //     res.status(500).send({ message: err });
+          //     return;
+          //   }
 
-checkRolesExisted = (req, res, next) => {
-  if (req.body.roles) {
-    for (let i = 0; i < req.body.roles.length; i++) {
-      if (!ROLES.includes(req.body.roles[i])) {
-        res.status(400).send({
-          message: `Failed! Role ${req.body.roles[i]} does not exist!`
-        });
-        return;
+          //   if (user) {
+          //     res.status(400).send({ message: "Email is already in use!" });
+          //     return;
+          //   }
+          // })
       }
-    }
-  }
 
-  next();
+      // Investor.findOne({
+      //   phone: req.body.phone
+      // }).exec((err, user) => {
+      //   if (err) {
+      //     res.status(500).send({ message: err });
+      //     return;
+      //   }
+    
+      //   if (user) {
+      //     res.status(400).send({ message: "Phone is already in use!" });
+      //     return;
+      //   }
+      // })
+    
+      next();
+
+    })
+  })
 };
 
 isSameTwoPasswords = (req, res, next) => {
@@ -84,7 +149,6 @@ verifyCaptcha = async (req, res, next) => {
 
 const verifySignUp = {
   checkDuplicateUsernameOrEmail,
-  checkRolesExisted,
   isSameTwoPasswords,
   verifyCaptcha
 };
