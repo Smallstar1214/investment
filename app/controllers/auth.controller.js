@@ -21,7 +21,12 @@ exports.signup = (req, res) => {
       password: bcrypt.hashSync(req.body.password, 8),
       category: "PPF",
       avatar: "",
-      role: role
+      role: role,
+      summary: "",
+      business: [],
+      investSize: 0,
+      language: [],
+      hwoSoon:0
     });
 
     user.save((err, saveduser) => {

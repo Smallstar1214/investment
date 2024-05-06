@@ -39,8 +39,8 @@ const db = require("./app/models");
 const Admin = db.admin;
 
 db.mongoose
-  // .connect('mongodb+srv://doadmin:70rFU1KE2ny6439i@jampackDB-02942f34.mongo.ondigitalocean.com/admin?tls=true&authSource=admin', {
-    .connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
+  .connect('mongodb+srv://doadmin:70rFU1KE2ny6439i@jampackDB-02942f34.mongo.ondigitalocean.com/admin?tls=true&authSource=admin', {
+    // .connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
