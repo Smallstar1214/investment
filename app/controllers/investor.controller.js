@@ -36,6 +36,43 @@ exports.updateData = (req, res) => {
     })
 }
 
+exports.updatePreference = (req, res) => {
+    Investor.findOne({_id: req.body.id}, (err, investor) => {
+        if(err) {
+            return res.status(500).json({message: err});
+        } else {
+            investor.business = req.body.editBusinessType;
+            investor.investSize = req.body.editInvestmentSize;
+            investor.language = req.body.editLanguage;
+            investor.howSoon = req.body.editInvestDay;
+
+            investor.save((err) => {
+                if(err) {
+                    return res.status(400).json({message: err});
+                }
+                return res.status(200).json({message: "Updated correctly"});
+            })
+        }
+    })
+}
+
+exports.updateSummary = (req, res) => {
+    Investor.findOne({_id: req.body.id}, (err, investor) => {
+        if(err) {
+            return res.status(500).json({message: err});
+        } else {
+            investor.summary = req.body.editSummary;
+
+            investor.save((err) => {
+                if(err) {
+                    return res.status(400).json({message: err});
+                }
+                return res.status(200).json({message: "Updated correctly"});
+            })
+        }
+    })
+}
+
 exports.deleteInvestorById = (req, res) => {
     Investor.findOneAndRemove({_id: req.body.investorId})
     .then(

@@ -35,6 +35,26 @@ const Investor = mongoose.model(
         avatar: {
             type: String,
         },
+        summary: {
+            type: String,
+            default:""
+        },
+        business: {
+            type: [String],
+            default: [],
+        },
+        investSize: {
+            type: Number,
+            default: 0,
+        },
+        language: {
+            type:[String],
+            default:[],
+        },
+        howSoon: {
+            type: Number,
+            default: 0
+        },
         role: {
             type:String,
         }
