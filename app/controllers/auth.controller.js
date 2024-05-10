@@ -41,15 +41,9 @@ exports.signup = (req, res) => {
         {
           algorithm: 'HS256',
           allowInsecureKeySizes: true,
-          expiresIn: 86400, // 24 hours
+          expiresIn: 86400, 
         }
       );
-
-      // var authorities = [];
-
-      // for (let i = 0; i < user.roles.length; i++) {
-      //   authorities.push("ROLE_" + user.roles[i].name.toUpperCase());
-      // }
 
       req.session.token = token;
 
