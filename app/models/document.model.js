@@ -22,7 +22,6 @@ const documentSchema = new mongoose.Schema({
     actions: [
         {preview: String},
     ],
-    createdBy: String,
     shareTo:[String],
 });
 

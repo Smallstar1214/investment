@@ -5,6 +5,7 @@ const authRoutes = require("./app/routes/auth.routes");
 const investorRoutes = require("./app/routes/investor.routes");
 const downloadRoutes = require('./app/routes/download.routes');
 const documentRoutes = require('./app/routes/document.routes');
+const companyRoutes = require('./app/routes/company.routes');
 // const path = require("path");
 
 const dbConfig = require("./app/config/db.config");
@@ -43,8 +44,8 @@ const db = require("./app/models");
 const Admin = db.admin;
 
 db.mongoose
-  // .connect('mongodb+srv://doadmin:70rFU1KE2ny6439i@jampackDB-02942f34.mongo.ondigitalocean.com/admin?tls=true&authSource=admin', {
-    .connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
+  .connect('mongodb+srv://doadmin:70rFU1KE2ny6439i@jampackDB-02942f34.mongo.ondigitalocean.com/admin?tls=true&authSource=admin', {
+    // .connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
@@ -76,6 +77,7 @@ app.use('/auth', authRoutes);
 app.use('/investor', investorRoutes);
 app.use('/download', downloadRoutes);
 app.use('/document', documentRoutes);
+app.use('/company', companyRoutes);
 
 function initial() {
   Admin.findOne({

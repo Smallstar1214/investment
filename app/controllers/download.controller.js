@@ -67,7 +67,6 @@ exports.downloadDoc = (req, res) => {
         size : size,
         Updated: lastUpdated,
         actions: [{preview:"#"},],
-        createdBy: req.body.id,
         shareTo: [],
     })
 

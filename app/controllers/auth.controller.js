@@ -2,6 +2,7 @@ const config = require("../config/auth.config");
 const db = require("../models");
 const Investor = db.investor;
 const Admin = db.admin;
+const Company = db.company;
 
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
@@ -56,7 +57,36 @@ exports.signup = (req, res) => {
       });
     });
   } else {
-    res.status(500).send({message: "You have to signup as Investor"});
+    const company = new Company({
+      companyName: req.body.userName,
+      phone: req.body.phone,
+      role: role,
+      password: bcrypt.hashSync(req.body.password, 8),
+    });
+
+    company.save((err, savedCompany) => {
+      if(err) {
+        return res.status(500).send({message: err});
+      }
+
+      const token = jwt.sign(
+        { id: savedCompany.id },
+        config.secret,
+        {
+          algorithm: 'HS256',
+          allowInsecureKeySizes: true,
+          expiresIn: 86400, 
+        }
+      );
+
+      req.session.token = token;
+      res.status(200).send({
+        id: savedCompany._id,
+        userName: savedCompany.companyName,
+        role: savedCompany.role,
+        token: token,
+      })
+    })
   }
 };
 
@@ -90,40 +120,79 @@ exports.signin = (req, res) => {
         }
   
         if (!user) {
-          return res.status(404).send({ message: "User Not found." });
+          Company.findOne(
+            {companyName: req.body.userName},
+            (err, user) => {
+              if(err) {
+                res.status(500).send({message: err});
+                return ;
+              }
+  
+              if(!user) {
+                res.status(404).send({message: "User Not Found"});
+                return;
+              }
+
+              var passwordIsValid = bcrypt.compareSync(
+                req.body.password,
+                user.password
+              );
+
+              if(!passwordIsValid) {
+                return res.status(401).send({message: "Invalid Password!"});
+              }
+
+              const token = jwt.sign({ id: user.id },
+                config.secret,
+                {
+                  algorithm: 'HS256',
+                  allowInsecureKeySizes: true,
+                  expiresIn: 86400, // 24 hours
+                });
+    
+              req.session.token = token;
+    
+              return res.status(200).send({
+                id: user._id,
+                role: user.role,
+                userName: user.companyName,
+                token: token,
+              });
+
+            }
+          )
+        } else {
+          var passwordIsValid = bcrypt.compareSync(
+            req.body.password,
+            user.password
+          );
+
+          if (!passwordIsValid) {
+            return res.status(401).send({ message: "Invalid Password!" });
+          }
+          const token = jwt.sign({ id: user._id },
+                                  config.secret,
+                                  {
+                                    algorithm: 'HS256',
+                                    allowInsecureKeySizes: true,
+                                    expiresIn: 86400, // 24 hours
+                                  });
+    
+          req.session.token = token;
+    
+          return res.status(200).send({
+            id: user._id,
+            role: user.role,
+            userName: user.userName,
+            token: token,
+          });
         }
-  
-        var passwordIsValid = bcrypt.compareSync(
-          req.body.password,
-          user.password
-        );
-  
-        if (!passwordIsValid) {
-          return res.status(401).send({ message: "Invalid Password!" });
-        }
-  
-        const token = jwt.sign({ id: user.id },
-                                config.secret,
-                                {
-                                  algorithm: 'HS256',
-                                  allowInsecureKeySizes: true,
-                                  expiresIn: 86400, // 24 hours
-                                });
-  
-        req.session.token = token;
-  
-        return res.status(200).send({
-          id: user._id,
-          role: user.role,
-          token: token,
-        });
       });
     } else {
       if(req.body.password !== user.password) {
         return res.status(401).send({ message: "Invalid Password!" });
       }
-
-      const token = jwt.sign({ id: user.id },
+      const token = jwt.sign({ id: user._id },
         config.secret,
         {
           algorithm: 'HS256',
@@ -136,6 +205,7 @@ exports.signin = (req, res) => {
       return res.status(200).send({
         id: user._id,
         role: "admin",
+        userName: user.userName,
         token: token,
       });
     }

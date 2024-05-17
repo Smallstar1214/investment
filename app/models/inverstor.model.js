@@ -55,6 +55,10 @@ const Investor = mongoose.model(
             type: Number,
             default: 0
         },
+        notes: [{
+            companyName: String,
+            note: String,
+        }],
         role: {
             type:String,
         }

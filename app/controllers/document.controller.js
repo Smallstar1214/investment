@@ -3,14 +3,27 @@ const Document = db.document;
 const Investor = db.investor;
 
 exports.getMyCreatedDocuments = (req, res) => {
-    const createdBy = req.query.id;
-    Document.find({createdBy: createdBy},(err, docs) => {
+    const companyName = req.query.company;
+    Document.find({companyName: companyName},(err, docs) => {
         if(err) {
             return res.status(500).send({message: "There is error during fetching my documents"})
         }
 
         return res.status(200).send({data: docs});
     })
+}
+
+exports.getAllDocumnets = (req, res) => {
+    Document.find(
+        {},
+        (err, docs) => {
+            if(err) {
+                return res.status(500).send({message: err});
+            }
+
+            res.status(200).json({data: docs});
+        }   
+    )
 }
 
 exports.getMySharedDocuments = (req, res) => {

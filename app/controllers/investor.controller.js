@@ -1,4 +1,5 @@
 const db = require("../models");
+const Company = require("../models/company.model");
 const Investor = db.investor;
 
 exports.getAllInvestors = (req, res) => {
@@ -70,6 +71,22 @@ exports.updateSummary = (req, res) => {
                 return res.status(200).json({message: "Updated correctly"});
             })
         }
+    })
+}
+
+exports.updateNotes = (req, res) => {
+
+    const {id, note} = req.body;
+
+    Investor.findOneAndUpdate(
+        {_id: id},
+        {$addToSet:{notes: note}},
+    )
+    .exec((err, updatedInvestor) => {
+        if(err) {
+            return res.status(500).send({message: err});
+        }
+        return res.status(200).send({message: "Success"});
     })
 }
 
