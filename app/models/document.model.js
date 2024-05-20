@@ -22,7 +22,7 @@ const documentSchema = new mongoose.Schema({
     actions: [
         {preview: String},
     ],
-    shareTo:[String],
+    shareTo:String,
 });
 
 // Middleware to update the 'updatedDate' field whenever the document is updated

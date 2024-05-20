@@ -13,16 +13,16 @@ exports.getMyCreatedDocuments = (req, res) => {
     })
 }
 
-exports.getAllDocumnets = (req, res) => {
+exports.getAllPublicDocumnets = (req, res) => {
     Document.find(
-        {},
+        {type: "Public"},
         (err, docs) => {
             if(err) {
                 return res.status(500).send({message: err});
             }
 
             res.status(200).json({data: docs});
-        }   
+        }
     )
 }
 
@@ -34,11 +34,10 @@ exports.getMySharedDocuments = (req, res) => {
             return res.status(500).send({message: "There is error during fetching my documents"})
         }
 
-        let userName = user?.userName;
-        console.log('name: ', userName);
+        let userEmail = user && user.email;
 
         Document.find(
-            { shareTo: userName },
+            { type: "Confidential", shareTo: userEmail },
             (err, docs) => {
                 if(err){
                     return res.status(500).send({message: "There is error during fetching my documents"})
