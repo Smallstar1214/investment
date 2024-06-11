@@ -6,6 +6,7 @@ const investorRoutes = require("./app/routes/investor.routes");
 const downloadRoutes = require('./app/routes/download.routes');
 const documentRoutes = require('./app/routes/document.routes');
 const companyRoutes = require('./app/routes/company.routes');
+const offerRoutes = require('./app/routes/offer.routes');
 // const path = require("path");
 
 const dbConfig = require("./app/config/db.config");
@@ -67,7 +68,6 @@ app.get('/', (req, res) => {
   res.status(200).json({message: 'Hello World!'});
 })
 
-
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
@@ -78,6 +78,7 @@ app.use('/investor', investorRoutes);
 app.use('/download', downloadRoutes);
 app.use('/document', documentRoutes);
 app.use('/company', companyRoutes);
+app.use('/offer', offerRoutes);
 
 function initial() {
   Admin.findOne({

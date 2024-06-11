@@ -10,6 +10,7 @@ db.investor = require("./inverstor.model");
 db.admin = require("./admin.model");
 db.document = require("./document.model");
 db.company = require("./company.model");
+db.offer = require("./offer.model");
 
 db.ROLES = ["user", "admin", "moderator"];
 

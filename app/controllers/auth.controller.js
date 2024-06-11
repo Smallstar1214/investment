@@ -60,7 +60,9 @@ exports.signup = (req, res) => {
     const company = new Company({
       companyName: req.body.userName,
       phone: req.body.phone,
-      role: role,
+      category: req.body.category,
+      description: req.body.description,
+      role: req.body.role,
       password: bcrypt.hashSync(req.body.password, 8),
     });
 
@@ -79,7 +81,7 @@ exports.signup = (req, res) => {
         }
       );
 
-      req.session.token = token;
+      // req.session.token = token;
       res.status(200).send({
         id: savedCompany._id,
         userName: savedCompany.companyName,

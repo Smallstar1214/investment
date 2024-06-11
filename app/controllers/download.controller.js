@@ -1,11 +1,11 @@
 const db = require("../models");
 const Investor = db.investor;
 const Document = db.document;
+const Offer = db.offer;
 
 exports.downloadImg = (req, res) => {
     // const imgURL = "http://localhost:8080/images/" + req.file.filename;
     const imgURL = "https://autoinvest.ai/images/" + req.file.filename;
-    // const imgURL = "http://104.131.170.242:8080/" + req.file.filename;
 
     const id = req.body.id;
     Investor.findOne({_id: id}, (error, investor) => {
@@ -24,9 +24,60 @@ exports.downloadImg = (req, res) => {
     })
 }
 
+exports.uploadProductImage = (req, res) => {
+    // const imgURL = "http://localhost:8080/images/" + req.file.filename;
+    const imgURL = "https://autoinvest.ai//images/" + req.file.filename;
+
+    const companyName = req.body.companyName;
+    Offer.findOneAndUpdate(
+        {companyName: companyName},
+        {$addToSet: {projectImages: imgURL}},
+    )
+    .exec((err, updatedOffer) => {
+        if(err) {
+            return res.status(500).send({message: err});
+        }
+        Offer.find({companyName: companyName}, (err, offers) => {
+            if(err) {
+                return res.status(500).send({message: err});
+            }
+
+            res.status(200).json({data: offers});
+        })
+    })
+}
+
+exports.deleteProductImage = (req, res) => {
+    const url = req.body.imgURL;
+    const companyName = req.body.companyName;
+
+    console.log("url = ", req.body.companyName);
+
+    Offer.findOneAndUpdate(
+        {projectImages: url},
+        {
+            $pull: {    
+                projectImages: url
+            }
+        }
+    )
+    .exec((err, updatedOffer) => {
+        if(err) {
+            return res.status(500).send({message: err});
+        }
+
+        Offer.find({companyName: companyName}, (err, offers) => {
+            if(err) {
+                return res.status(500).send({message: err});
+            }
+
+            res.status(200).json({data: offers});
+        })
+    })
+}
+
 exports.downloadDoc = (req, res) => {
     const fileName = req.file.filename;
-    // const fileName = "https://autoinvest.ai/" + req.file.filename;
     let size;
     let fileType, icons, iconsBg;
     if (fileName.endsWith('.pdf')) {
